@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>ArcherQuiverTestAdapter</AssemblyName>
+    <Version>0.0.1</Version>
+    <Authors>Jason-Kerney</Authors>
+    <Description>A test executor to run Archer Tests</Description>
+    <Copyright>© Robert Jason Kerney 2023</Copyright>
+    <PackageProjectUrl>https://github.com/ArcherFSharpTesting/Archer.Quiver</PackageProjectUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/ArcherFSharpTesting/Archer.Quiver</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>F# FSharp Test Testing Framework Unit UnitTest TestAdapter</PackageTags>
+    <PackageReleaseNotes>None</PackageReleaseNotes>
+    <AssemblyVersion>0.0.1</AssemblyVersion>
+    <FileVersion>0.0.1</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Literals.fs" />
+    <Compile Include="TestGetter.fs" />
+    <Compile Include="Types.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Archer.CoreTypes.Lib" Version="0.0.1" />
+    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="17.5.0" />
+  </ItemGroup>
+
+</Project>
