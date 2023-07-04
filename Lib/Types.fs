@@ -34,7 +34,7 @@ type QuiverDiscoverer (forbidden: string list) =
                 else
                     (Directory.GetCurrentDirectory (), source)
                     |> Path.Combine
-            let tests = getTests sources
+            let tests = getTests logger sources
                 
             logger.SendMessage (TestMessageLevel.Informational, "End Discovery")
                 
@@ -63,7 +63,7 @@ type QuiverExecutor () =
             
         member this.Cancel () = () // failwith "todo"
         member this.RunTests (sources: string seq, runContext: IRunContext, frameworkHandle: IFrameworkHandle): unit =
-            let tests = getTests sources
+            let tests = getTests frameworkHandle sources
                 
             let executor = this :> ITestExecutor
             

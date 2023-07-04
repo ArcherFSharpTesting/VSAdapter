@@ -5,6 +5,7 @@ open System.IO
 open System.Reflection
 open Archer.CoreTypes.InternalTypes
 open Microsoft.VisualStudio.TestPlatform.ObjectModel
+open Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging
 
 let getPath (source: string) =
     if Path.IsPathRooted source then source |> FileInfo
@@ -13,7 +14,7 @@ let getPath (source: string) =
         |> Path.Combine
         |> FileInfo
         
-let getTests (sources: string seq) =
+let getTests (logger: IMessageLogger) (sources: string seq) =
     sources
         |> Seq.mapi (fun i sourceName ->
             let path = getPath sourceName
@@ -27,15 +28,17 @@ let getTests (sources: string seq) =
                 |> Array.map (fun t ->
                     let properties =
                         t.GetProperties (BindingFlags.Public ||| BindingFlags.Static)
-                    //     |> Array.filter (fun p ->
-                    //         let propInterfaces =
-                    //             p.PropertyType.GetInterfaces ()
-                    //         
-                    //         propInterfaces
-                    //         |> Array.contains typeof<ITest>
-                    //     )
-                    //     
-                    // 0 < properties.Length
+
+                    properties
+                    |> Array.iter (fun prop ->
+                        //let tmp = prop.GetValue (null)
+                        //let msg = 
+                        //    if tmp = null then $"{prop.Name}: (null)"
+                        //    else $"{prop.Name}: '{tmp}'"
+                        //logger.SendMessage (TestMessageLevel.Warning, msg)
+                        logger.SendMessage (TestMessageLevel.Warning, prop.ToString ())
+                    )
+
                     properties
                 )
                 |> Array.concat
@@ -48,7 +51,8 @@ let getTests (sources: string seq) =
         
             testTypes
             |> Array.map (fun tt ->
-                TestCase ($"%s{tt.DeclaringType.FullName}.%s{tt.Name}", ExecutorUri |> Uri, sourceName)
+                let tc = TestCase ($"%s{tt.DeclaringType.FullName}.%s{tt.Name}", ExecutorUri |> Uri, sourceName)
+                tc
             )
             
         )
