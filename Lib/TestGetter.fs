@@ -2,10 +2,7 @@
 
 open System
 open System.IO
-open System.Reflection
-open Archer.CoreTypes.InternalTypes
 open Microsoft.VisualStudio.TestPlatform.ObjectModel
-open Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging
 
 open Archer.Quiver.Lib.Globals
 
@@ -16,7 +13,7 @@ let getPath (source: string) =
         |> Path.Combine
         |> FileInfo
         
-let getTests (logger: IMessageLogger) (sources: string seq) =
+let getTests (sources: string seq) =
     sources
         |> Seq.toList
         |> List.map (fun source ->

@@ -17,7 +17,6 @@ open Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging
 [<DefaultExecutorUri (ExecutorUri)>]
 type QuiverDiscoverer (forbidden: string list) =
     new () =
-        addMessage "QuiverDiscoverer created"
         let f =
             [
                 Environment.GetEnvironmentVariable "ProgramW6432"
@@ -32,14 +31,14 @@ type QuiverDiscoverer (forbidden: string list) =
         
     interface ITestDiscoverer with
         member _.DiscoverTests (sources: string seq, discoveryContext: IDiscoveryContext, logger: IMessageLogger, discoverySink: ITestCaseDiscoverySink) =
-            logger.SendMessage (TestMessageLevel.Warning, "ITestDiscoverer.DiscoverTests called")
-            logger |> logMessages TestMessageLevel.Warning
+            setLogger logger
+            sendWarning "ITestDiscoverer.DiscoverTests called"
             
-            logger.SendMessage (TestMessageLevel.Warning, "Starting Discovery")
+            sendWarning "Starting Discovery"
             
-            let tests = getTests logger sources
+            let tests = getTests sources
                 
-            logger.SendMessage (TestMessageLevel.Informational, "End Discovery")
+            sendWarning "End Discovery"
                 
             tests
             |> Seq.iter discoverySink.SendTestCase
@@ -47,31 +46,22 @@ type QuiverDiscoverer (forbidden: string list) =
         
 [<ExtensionUri (ExecutorUri)>]
 type QuiverExecutor () =
-    do
-        addMessage "QuiverExecutor created"
-        
     interface ITestExecutor with
         member this.RunTests (tests: TestCase seq, runContext: IRunContext, frameworkHandle: IFrameworkHandle): unit =
-            let itype = typeof<ITest>
-
+            setLogger frameworkHandle
+            let iType = typeof<ITest>
+            
             getAllTests ()
             |> List.iter (fun (t, prop) ->
-                frameworkHandle.SendMessage (TestMessageLevel.Warning, $"Is ITest ({itype.IsAssignableFrom prop.PropertyType})")
-
-                let a =
-                    prop.GetAccessors ()
-                    |> Array.head
-                    
-                let a = a.Invoke (null, null)
-                        
-                frameworkHandle.SendMessage (TestMessageLevel.Warning, $"{prop.Name}: %A{a}")
+                sendWarning $"processing: {t.Name}"
+                sendWarning $"\tIs ITest ({iType.IsAssignableFrom prop.PropertyType})"
 
                 let v = prop.GetValue (null, null)
                 let msg =
-                    if v = null then $"%s{prop.Name}: (null)"
-                    else $"{prop.Name}: %A{v}"
+                    if v = null then $"\t%s{prop.Name}: (null)"
+                    else $"\t{prop.Name}: %A{v}"
                     
-                frameworkHandle.SendMessage (TestMessageLevel.Warning, msg)
+                sendWarning msg
             )
 
             let handleTest (tc: TestCase) =
@@ -82,17 +72,21 @@ type QuiverExecutor () =
                 tr |> frameworkHandle.RecordResult
                 frameworkHandle.RecordEnd (tc, testOutcome)
                 
-            frameworkHandle.SendMessage (TestMessageLevel.Warning, tests |> Seq.length |> sprintf "Running %d Test(s)")                
             tests
-            |> Seq.iter handleTest
-            
-            //failwith "todo"
+                |> Seq.length
+                |> sprintf "Running %d Test(s)"
+                |> sendWarning
+                
+            tests
+                |> Seq.iter handleTest
             
         member this.Cancel () = () // failwith "todo"
+        
         member this.RunTests (sources: string seq, runContext: IRunContext, frameworkHandle: IFrameworkHandle): unit =
-            frameworkHandle.SendMessage (TestMessageLevel.Warning, "ITestExecutor.RunTests called")
-            frameworkHandle |> logMessages TestMessageLevel.Warning
-            let tests = getTests frameworkHandle sources
+            setLogger frameworkHandle
+            sendWarning "ITestExecutor.RunTests called"
+            
+            let tests = getTests sources
                 
             let executor = this :> ITestExecutor
             

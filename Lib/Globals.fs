@@ -13,53 +13,66 @@ let getLogFunction (logLevel: TestMessageLevel) (logger: IMessageLogger) =
     log
     
 let getPath (source: string) =
-    if Path.IsPathRooted source then source |> FileInfo
+    if Path.IsPathRooted source then
+        let fi = source |> FileInfo
+        fi.Directory
     else
-        (Directory.GetCurrentDirectory (), source)
-        |> Path.Combine
-        |> FileInfo
+        Directory.GetCurrentDirectory ()
+        |> DirectoryInfo
     
 let private assemblies = System.Collections.Generic.Dictionary<string, Assembly> ()
 let private tests = System.Collections.Generic.Dictionary<string, (Type * PropertyInfo) list> ()
 
 let private loadTests (sourceName: string) (assembly: Assembly) =
-    if tests.ContainsKey sourceName then
-        ()
-    else
-            
-        let types =
-            assembly.GetExportedTypes ()
+    let types =
+        assembly.GetExportedTypes ()
+    
+    let testTypes =
+        types
+        |> Array.map (fun t ->
+            let properties =
+                t.GetProperties (BindingFlags.Public ||| BindingFlags.Static ||| BindingFlags.FlattenHierarchy)
+                |> Array.map (fun p ->
+                    t, p
+                )
+            properties
+        )
+        |> Array.concat
+        |> Array.toList
+        |> List.filter (fun (_t, prop) -> (prop.PropertyType.ContainsGenericParameters || prop.PropertyType.IsGenericType || prop.PropertyType.IsGenericParameter) |> not)
         
-        let testTypes =
-            types
-            |> Array.map (fun t ->
-                let properties =
-                    t.GetProperties (BindingFlags.Public ||| BindingFlags.Static ||| BindingFlags.FlattenHierarchy)
-                    |> Array.map (fun p ->
-                        t, p
-                    )
-                properties
-            )
-            |> Array.concat
-            |> Array.toList
-            
+    if (tests.ContainsKey sourceName) then
+        tests[sourceName] <-
+            [testTypes; tests[sourceName]]
+            |> List.concat
+            |> List.distinctBy (fun (t, prop) -> (t.FullName, prop.Name))
+    else
         tests[sourceName] <- testTypes
 
 
 let getAssembly sourceName =
     let path = getPath sourceName
     
-    if assemblies.ContainsKey path.FullName then
-        assemblies[path.FullName]
-    else
-        let application =  path.FullName |> File.ReadAllBytes |> Assembly.Load
+    path.GetFiles "*.dll"
+    |> Array.filter ((fun fi -> fi.FullName) >> assemblies.ContainsKey >> not)
+    |> Array.iter (fun fi ->
+        let assembly =  fi.FullName |> Assembly.LoadFile
         
-        assemblies[path.FullName] <- application
-        
-        application
-        |> loadTests sourceName
-        
-        application
+        assemblies[fi.FullName] <- assembly
+    )
+    
+    let key = Path.Combine (path.FullName, sourceName)
+    
+    let assembly = assemblies[key]
+    
+    assembly |> loadTests sourceName
+    assembly
+    
+let getAssemblyFiles () =
+    assemblies.Keys
+    |> Seq.map FileInfo
+    |> Seq.toList
+    
         
 let findTests sourceName =
    getAssembly sourceName |> ignore
