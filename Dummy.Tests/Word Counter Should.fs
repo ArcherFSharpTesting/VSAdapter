@@ -30,7 +30,7 @@ let ``count "hello" as one word`` =
     )
     
 let ``count "" as zero words`` =
-    feature.Test (fun _ ->
+    feature.Ignore (fun _ ->
         ""
         |> countWords
         |> Should.BeEqualTo 0

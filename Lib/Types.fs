@@ -38,7 +38,6 @@ type QuiverDiscoverer (forbidden: string list) =
     interface ITestDiscoverer with
         member _.DiscoverTests (sources: string seq, discoveryContext: IDiscoveryContext, logger: IMessageLogger, discoverySink: ITestCaseDiscoverySink) =
             setLogger logger
-            sendWarning "ITestDiscoverer.DiscoverTests called"
             
             sendWarning "Starting Discovery"
             
@@ -93,15 +92,22 @@ type QuiverExecutor () =
                         tc|> frameworkHandle.RecordStart
                     | TestEndExecution testExecutionResult ->
                         let vsTestResult = TestResult tc
-                        let indenter = Indent.IndentTransformer ()
+                        let indenter = Indent.IndentTransformer 1
                         
+                        let errorMessage = defaultDetailedTestExecutionResultTransformer indenter test None testExecutionResult
+                        let errorMessage = errorMessage.Trim ()
                         match testExecutionResult with
                         | TestExecutionResult testResult ->
                             match testResult with
-                            | TestFailure _ ->
+                            | TestFailure failure ->
                                 let testOutcome = TestOutcome.Failed
-                                vsTestResult.ErrorMessage <- defaultDetailedTestExecutionResultTransformer indenter test None testExecutionResult
-                                vsTestResult.Outcome <- testOutcome
+                                match failure with
+                                | TestIgnored _ ->
+                                    vsTestResult.ErrorMessage <- errorMessage
+                                    vsTestResult.Outcome <- TestOutcome.Skipped
+                                | _ ->
+                                    vsTestResult.ErrorMessage <- errorMessage
+                                    vsTestResult.Outcome <- testOutcome
                             | TestSuccess ->
                                 let testOutcome = TestOutcome.Passed
                                 vsTestResult.Outcome <- testOutcome
@@ -109,7 +115,7 @@ type QuiverExecutor () =
                         | _ ->
                             let testOutcome = TestOutcome.Failed
                             vsTestResult.Outcome <- testOutcome
-                            vsTestResult.ErrorMessage <- defaultDetailedTestExecutionResultTransformer indenter test None testExecutionResult
+                            vsTestResult.ErrorMessage <- errorMessage
                         
                     
                         vsTestResult
@@ -138,7 +144,6 @@ type QuiverExecutor () =
         
         member this.RunTests (sources: string seq, runContext: IRunContext, frameworkHandle: IFrameworkHandle): unit =
             setLogger frameworkHandle
-            sendWarning "ITestExecutor.RunTests called"
             
             let tests = getTests sources
                 
