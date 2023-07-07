@@ -1,10 +1,16 @@
 ﻿namespace Archer.Quiver.Lib
 
 open System.Reflection
+open Archer
 open Archer.CoreTypes.InternalTypes
+open Archer.CoreTypes.InternalTypes.RunnerTypes
+open Archer.Logger
 open Archer.Quiver.Lib.TestGetter
 open Archer.Quiver.Lib.Literals
 open Archer.Quiver.Lib.Globals
+open Archer.Logger.Summaries
+open Archer.Logger.Detail
+open Archer.Bow
 
 open System
 open Microsoft.FSharp.Collections
@@ -49,36 +55,84 @@ type QuiverExecutor () =
     interface ITestExecutor with
         member this.RunTests (tests: TestCase seq, runContext: IRunContext, frameworkHandle: IFrameworkHandle): unit =
             setLogger frameworkHandle
-            let iType = typeof<ITest>
             
-            getAllTests ()
-            |> List.iter (fun (t, prop) ->
-                sendWarning $"processing: {t.Name}"
-                sendWarning $"\tIs ITest ({iType.IsAssignableFrom prop.PropertyType})"
+            let archerTests = getTestsByName ()
+            
+            let testCases =
+                tests
+                |> Seq.map (fun t -> t.FullyQualifiedName, t)
+                |> dict
 
-                let v = prop.GetValue (null, null)
-                let msg =
-                    if v = null then $"\t%s{prop.Name}: (null)"
-                    else $"\t{prop.Name}: %A{v}"
+            // let handleTest (tc: TestCase) =
+            //     sendWarning $"processing: {tc.DisplayName}"
+            //     let traitMsg = tc.Traits |> Seq.map (fun tr -> $"{{{tr.Name}: {tr.Value}}}") |> fun items -> System.String.Join ("; ", items)
+            //     sendWarning $"\tFile: {tc.CodeFilePath} @{tc.LineNumber}"
+            //     sendWarning $"\tQualified Name: {tc.FullyQualifiedName}"
+            //     sendWarning $"\t[{traitMsg}]"
+            //     sendWarning $"\t'{tc.Source}'"
+            //     
+            //     frameworkHandle.RecordStart tc
+            //     let testOutcome = TestOutcome.Passed
+            //     let tr = TestResult tc
+            //     tr.Outcome <- testOutcome 
+            //     tr |> frameworkHandle.RecordResult
+            //     frameworkHandle.RecordEnd (tc, testOutcome)
+            
+            let archerFramework = bow.Runner ()
+            
+            archerFramework.RunnerLifecycleEvent
+            |> Event.add (fun args ->
+                match args with
+                | RunnerStartExecution _ ->
+                    printfn ""
+                | RunnerTestLifeCycle (test, testEventLifecycle, _) ->
+                    let tc = testCases[test |> getTestFullName]
                     
-                sendWarning msg
+                    match testEventLifecycle with
+                    | TestStartExecution _cancelEventArgs ->
+                        tc|> frameworkHandle.RecordStart
+                    | TestEndExecution testExecutionResult ->
+                        let vsTestResult = TestResult tc
+                        let indenter = Indent.IndentTransformer ()
+                        
+                        match testExecutionResult with
+                        | TestExecutionResult testResult ->
+                            match testResult with
+                            | TestFailure _ ->
+                                let testOutcome = TestOutcome.Failed
+                                vsTestResult.ErrorMessage <- defaultDetailedTestExecutionResultTransformer indenter test None testExecutionResult
+                                vsTestResult.Outcome <- testOutcome
+                            | TestSuccess ->
+                                let testOutcome = TestOutcome.Passed
+                                vsTestResult.Outcome <- testOutcome
+                                
+                        | _ ->
+                            let testOutcome = TestOutcome.Failed
+                            vsTestResult.Outcome <- testOutcome
+                            vsTestResult.ErrorMessage <- defaultDetailedTestExecutionResultTransformer indenter test None testExecutionResult
+                        
+                    
+                        vsTestResult
+                            |> frameworkHandle.RecordResult
+                        (tc, vsTestResult.Outcome)
+                            |> frameworkHandle.RecordEnd
+                            
+                    | _ -> ()
+                | RunnerEndExecution ->
+                    printfn "\n"
             )
-
-            let handleTest (tc: TestCase) =
-                frameworkHandle.RecordStart tc
-                let testOutcome = TestOutcome.Passed
-                let tr = TestResult tc
-                tr.Outcome <- testOutcome 
-                tr |> frameworkHandle.RecordResult
-                frameworkHandle.RecordEnd (tc, testOutcome)
+            
+            let selectedTests = 
+                testCases.Keys
+                |> Seq.map (fun testName ->
+                    archerTests[testName]
+                )
+            
+            let runTests (runner: IRunner) = runner.Run () |> ignore
                 
-            tests
-                |> Seq.length
-                |> sprintf "Running %d Test(s)"
-                |> sendWarning
-                
-            tests
-                |> Seq.iter handleTest
+            selectedTests
+            |> archerFramework.AddTests
+            |> runTests
             
         member this.Cancel () = () // failwith "todo"
         

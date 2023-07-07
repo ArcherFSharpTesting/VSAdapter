@@ -1,10 +1,13 @@
 ﻿module Archer.Quiver.Lib.Globals
 
 open System
+open System.Collections.Generic
 open System.IO
 open System.Reflection
 open Archer.CoreTypes.InternalTypes
 open Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging
+
+let getTestFullName (test: ITest) = $"%s{test.ContainerPath}.%s{test.ContainerName}.%s{test.TestName}"
 
 let getLogFunction (logLevel: TestMessageLevel) (logger: IMessageLogger) =
     let log msg =
@@ -20,8 +23,19 @@ let getPath (source: string) =
         Directory.GetCurrentDirectory ()
         |> DirectoryInfo
     
-let private assemblies = System.Collections.Generic.Dictionary<string, Assembly> ()
-let private tests = System.Collections.Generic.Dictionary<string, (Type * PropertyInfo) list> ()
+let private assemblies = Dictionary<string, Assembly> ()
+let private sourceTests = Dictionary<string, ITest list> ()
+
+let getTestsByName () =
+    sourceTests.Keys
+    |> Seq.map (fun key ->
+        sourceTests[key]
+    )
+    |> Seq.concat
+    |> Seq.map (fun test ->
+        test |> getTestFullName, test
+    )
+    |> dict
 
 let private loadTests (sourceName: string) (assembly: Assembly) =
     let types =
@@ -32,24 +46,25 @@ let private loadTests (sourceName: string) (assembly: Assembly) =
         |> Array.map (fun t ->
             let properties =
                 t.GetProperties (BindingFlags.Public ||| BindingFlags.Static ||| BindingFlags.FlattenHierarchy)
-                |> Array.map (fun p ->
-                    t, p
+                |> Array.filter (fun prop ->
+                    prop.PropertyType.IsAssignableFrom typeof<ITest>
+                )
+                |> Array.map (fun prop ->
+                    null |> prop.GetValue :?> ITest
                 )
             properties
         )
         |> Array.concat
         |> Array.toList
-        |> List.filter (fun (_t, prop) -> (prop.PropertyType.ContainsGenericParameters || prop.PropertyType.IsGenericType || prop.PropertyType.IsGenericParameter) |> not)
         
-    if (tests.ContainsKey sourceName) then
-        tests[sourceName] <-
-            [testTypes; tests[sourceName]]
+    if (sourceTests.ContainsKey sourceName) then
+        sourceTests[sourceName] <-
+            [testTypes; sourceTests[sourceName]]
             |> List.concat
-            |> List.distinctBy (fun (t, prop) -> (t.FullName, prop.Name))
+            |> List.distinctBy (fun test -> test |> getTestFullName)
     else
-        tests[sourceName] <- testTypes
-
-
+        sourceTests[sourceName] <- testTypes
+        
 let getAssembly sourceName =
     let path = getPath sourceName
     
@@ -76,12 +91,12 @@ let getAssemblyFiles () =
         
 let findTests sourceName =
    getAssembly sourceName |> ignore
-   tests[sourceName]
+   sourceTests[sourceName]
    
 let getAllTests () =
-    tests.Keys
+    sourceTests.Keys
     |> Seq.toList
     |> List.map (fun key ->
-        tests[key]
+        sourceTests[key]
     )
     |> List.concat

@@ -2,6 +2,7 @@
 
 open System
 open System.IO
+open Archer
 open Microsoft.VisualStudio.TestPlatform.ObjectModel
 
 open Archer.Quiver.Lib.Globals
@@ -19,6 +20,22 @@ let getTests (sources: string seq) =
         |> List.map (fun source ->
             source
             |> findTests
-            |> List.map (fun (t, p) -> TestCase ($"{t.FullName}.{p.Name}", ExecutorUri |> Uri, source))
+            |> List.map (fun test ->
+                let t = TestCase (test |> getTestFullName, ExecutorUri |> Uri, source)
+                test.Tags
+                |> Seq.iter (fun tag ->
+                        let testTrait =
+                            match tag with
+                            | Category s -> Trait ("Category", s)
+                            | Only -> Trait ("Only", "true")
+                            | Serial -> Trait ("Serial", "true")
+                            
+                        t.Traits.Add testTrait
+                    )
+                
+                t.LineNumber <- test.Location.LineNumber
+                t.CodeFilePath <- Path.Combine (test.Location.FilePath, test.Location.FileName)
+                t
+            )
         )
         |> List.concat
