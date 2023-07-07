@@ -62,21 +62,6 @@ type QuiverExecutor () =
                 |> Seq.map (fun t -> t.FullyQualifiedName, t)
                 |> dict
 
-            // let handleTest (tc: TestCase) =
-            //     sendWarning $"processing: {tc.DisplayName}"
-            //     let traitMsg = tc.Traits |> Seq.map (fun tr -> $"{{{tr.Name}: {tr.Value}}}") |> fun items -> System.String.Join ("; ", items)
-            //     sendWarning $"\tFile: {tc.CodeFilePath} @{tc.LineNumber}"
-            //     sendWarning $"\tQualified Name: {tc.FullyQualifiedName}"
-            //     sendWarning $"\t[{traitMsg}]"
-            //     sendWarning $"\t'{tc.Source}'"
-            //     
-            //     frameworkHandle.RecordStart tc
-            //     let testOutcome = TestOutcome.Passed
-            //     let tr = TestResult tc
-            //     tr.Outcome <- testOutcome 
-            //     tr |> frameworkHandle.RecordResult
-            //     frameworkHandle.RecordEnd (tc, testOutcome)
-            
             let archerFramework = bow.Runner ()
             
             archerFramework.RunnerLifecycleEvent
