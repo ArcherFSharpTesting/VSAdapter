@@ -13,8 +13,9 @@ let getFiles (dir: DirectoryInfo) (searchPattern: string) =
     dir.GetFiles searchPattern
     
 let getPossibleTestFilesByGetter (fileGetter: string -> FileInfo array): FileInfo [] =
-    let o = fileGetter "*.dll"
-    fileGetter "*.exe" |> ignore
-    o
+    [|
+        fileGetter "*.dll"
+        fileGetter "*.exe"
+    |] |> Array.concat
     
 let getPossibleTestFiles (dir: DirectoryInfo) = dir |> getFiles |> getPossibleTestFilesByGetter

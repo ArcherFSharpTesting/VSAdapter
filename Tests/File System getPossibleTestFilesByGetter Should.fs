@@ -36,3 +36,20 @@ let ``Return the any dll files found`` =
         |> FileSystem.getPossibleTestFilesByGetter
         |> Should.BeEqualTo expected
     )
+    
+let ``Return both dll and exe files`` =
+    feature.Test (fun _ ->
+        let expectedDlls = [| "MyFile.dll" |> FileInfo; "Another.dll" |> FileInfo |]
+        let expectedExes = [| "YourFile.exe" |> FileInfo; "DoStuff.exe" |> FileInfo |]
+        let expected = [| expectedDlls; expectedExes |] |> Array.concat
+        
+        let fileGetter filter =
+            if filter = "*.dll" then
+                expectedDlls
+            else
+                expectedExes
+                
+        fileGetter
+        |> FileSystem.getPossibleTestFilesByGetter
+        |> Should.BeEqualTo expected
+    )
