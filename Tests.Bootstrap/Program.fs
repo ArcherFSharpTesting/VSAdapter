@@ -29,6 +29,7 @@ runner.RunnerLifecycleEvent
 
 runner
 |> addMany [
-    ``Source Should``.Feature.GetTests ()
+    ``File System getDirectory Should``.feature.GetTests ()
+    ``File System getPossibleTestFilesByGetter Should``.feature.GetTests ()
 ]
 |> runAndReport

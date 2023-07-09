@@ -8,3 +8,13 @@ let getDirectory (fileName: string) =
         fi.Directory
     else
         Directory.GetCurrentDirectory () |> DirectoryInfo
+        
+let getFiles (dir: DirectoryInfo) (searchPattern: string) =
+    dir.GetFiles searchPattern
+    
+let getPossibleTestFilesByGetter (fileGetter: string -> FileInfo array): FileInfo [] =
+    let o = fileGetter "*.dll"
+    fileGetter "*.exe" |> ignore
+    o
+    
+let getPossibleTestFiles (dir: DirectoryInfo) = dir |> getFiles |> getPossibleTestFilesByGetter
