@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Archer.Quiver.TestAdapter.Lib", "TestAdapter.Lib\Archer.Quiver.TestAdapter.Lib.fsproj", "{42C6EE79-280A-4AA9-B561-E57226C8458C}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Archer.Quiver.TestAdapter", "TestAdapter\Archer.Quiver.TestAdapter.fsproj", "{B1A114DC-115E-4342-BED7-B00E5027FCE3}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Archer.Quiver.TestAdapter.Tests", "Tests\Archer.Quiver.TestAdapter.Tests.fsproj", "{F584DD37-F0F5-4827-9E12-9FA285B207BB}"
@@ -20,10 +18,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{42C6EE79-280A-4AA9-B561-E57226C8458C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42C6EE79-280A-4AA9-B561-E57226C8458C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42C6EE79-280A-4AA9-B561-E57226C8458C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42C6EE79-280A-4AA9-B561-E57226C8458C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B1A114DC-115E-4342-BED7-B00E5027FCE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1A114DC-115E-4342-BED7-B00E5027FCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1A114DC-115E-4342-BED7-B00E5027FCE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
