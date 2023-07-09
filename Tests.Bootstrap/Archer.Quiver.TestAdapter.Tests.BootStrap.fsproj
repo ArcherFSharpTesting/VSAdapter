@@ -14,6 +14,7 @@
     <PackageReference Include="Archer.Bow.Lib" Version="0.0.9.37" />
     <PackageReference Include="Archer.CoreTypes.Lib" Version="0.0.13.42" />
     <PackageReference Include="Archer.Logger.Lib" Version="0.0.0.6" />
+    <PackageReference Include="MicroLang.Lib" Version="0.0.12.58" />
   </ItemGroup>
 
 </Project>

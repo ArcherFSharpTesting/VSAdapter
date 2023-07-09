@@ -1,2 +1,32 @@
-﻿// For more information see https://aka.ms/fsharp-console-apps
-printfn "Hello from F#"
+﻿open Archer
+open Archer.Bow
+open Archer.CoreTypes.InternalTypes
+open Archer.CoreTypes.InternalTypes.RunnerTypes
+open Archer.Logger.Summaries
+open Archer.MicroLang
+
+let private runner = bow.Runner ()
+
+runner.RunnerLifecycleEvent
+|> Event.add (fun args ->
+    match args with
+    | RunnerStartExecution _ ->
+        printfn ""
+    | RunnerTestLifeCycle (test, testEventLifecycle, _) ->
+        match testEventLifecycle with
+        | TestEndExecution testExecutionResult ->
+            match testExecutionResult with
+            | TestExecutionResult TestSuccess -> ()
+            | result ->
+                let transformedResult = defaultTestExecutionResultSummaryTransformer result test
+                printfn $"%s{transformedResult}"
+            
+        | _ -> ()
+    | RunnerEndExecution ->
+        printfn "\n"
+)
+
+runner
+|> addMany [
+]
+|> runAndReport
