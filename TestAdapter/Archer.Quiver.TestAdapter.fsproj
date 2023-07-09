@@ -9,4 +9,12 @@
     <Compile Include="Library.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Archer.Bow.Lib" Version="0.0.9.37" />
+    <PackageReference Include="Archer.CoreTypes.Lib" Version="0.0.13.42" />
+    <PackageReference Include="Archer.Logger.Lib" Version="0.0.0.6" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
+    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="17.6.3" />
+  </ItemGroup>
+
 </Project>

@@ -3,10 +3,17 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Archer.Bow.Lib" Version="0.0.9.37" />
+    <PackageReference Include="Archer.CoreTypes.Lib" Version="0.0.13.42" />
+    <PackageReference Include="Archer.Logger.Lib" Version="0.0.0.6" />
   </ItemGroup>
 
 </Project>
