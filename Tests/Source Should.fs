@@ -22,4 +22,19 @@ let ``Return a directory info from a source string without full path`` =
         )
     )
     
+let ``Return a directory for a source with a path`` =
+    feature.Test (
+        TestTags [
+            Category "Source Path"
+        ],
+        TestBody (fun _ ->
+            let expected = @"C:\MyTestPath"
+            
+            @"C:\MyTestPath\Directory.GetCurrentDirectory () |> DirectoryInfo"
+            |> Source.getDirectory
+            |> fun di -> di.FullName
+            |> Should.BeEqualTo expected
+        )
+    )
+    
 let Feature = feature
