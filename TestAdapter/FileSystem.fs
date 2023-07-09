@@ -2,9 +2,9 @@
 
 open System.IO
 
-let getDirectory (source: string) =
-    if Path.IsPathRooted source then
-        let fi = source |> FileInfo
+let getDirectory (fileName: string) =
+    if Path.IsPathRooted fileName then
+        let fi = fileName |> FileInfo
         fi.Directory
     else
         Directory.GetCurrentDirectory () |> DirectoryInfo
