@@ -8,14 +8,14 @@ let getDirectory (fileName: string) =
         fi.Directory
     else
         Directory.GetCurrentDirectory () |> DirectoryInfo
-        
-let getFiles (dir: DirectoryInfo) (searchPattern: string) =
-    dir.GetFiles searchPattern
     
 let getPossibleTestFilesByGetter (fileGetter: string -> FileInfo array): FileInfo [] =
     [|
         fileGetter "*.dll"
         fileGetter "*.exe"
     |] |> Array.concat
+        
+let getFiles (dir: DirectoryInfo) (searchPattern: string) =
+    dir.GetFiles searchPattern
     
 let getPossibleTestFiles (dir: DirectoryInfo) = dir |> getFiles |> getPossibleTestFilesByGetter
