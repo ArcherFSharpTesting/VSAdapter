@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include="Library.fs" />
+    <Compile Include="Source Should.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +16,10 @@
     <PackageReference Include="Archer.CoreTypes.Lib" Version="0.0.13.42" />
     <PackageReference Include="Archer.Fletching.Lib" Version="0.0.0.33" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TestAdapter\Archer.Quiver.TestAdapter.fsproj" />
   </ItemGroup>
 
 </Project>

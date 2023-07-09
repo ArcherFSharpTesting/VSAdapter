@@ -17,4 +17,8 @@
     <PackageReference Include="MicroLang.Lib" Version="0.0.12.58" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Tests\Archer.Quiver.TestAdapter.Tests.fsproj" />
+  </ItemGroup>
+
 </Project>
