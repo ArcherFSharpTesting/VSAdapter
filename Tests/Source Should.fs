@@ -16,7 +16,7 @@ let ``Return a directory info from a source string without full path`` =
             let expected = (Directory.GetCurrentDirectory () |> DirectoryInfo).FullName
             
             "Archer.TestAdapter.Tests.dll"
-            |> Source.getDirectory
+            |> FileSystem.getDirectory
             |> fun di -> di.FullName
             |> Should.BeEqualTo expected
         )
@@ -31,7 +31,7 @@ let ``Return a directory for a source with a path`` =
             let expected = @"C:\MyTestPath"
             
             @"C:\MyTestPath\Directory.GetCurrentDirectory () |> DirectoryInfo"
-            |> Source.getDirectory
+            |> FileSystem.getDirectory
             |> fun di -> di.FullName
             |> Should.BeEqualTo expected
         )

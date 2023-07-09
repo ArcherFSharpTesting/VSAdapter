@@ -1,4 +1,4 @@
-﻿module Archer.Quiver.TestAdapter.Source
+﻿module Archer.Quiver.TestAdapter.FileSystem
 
 open System.IO
 
