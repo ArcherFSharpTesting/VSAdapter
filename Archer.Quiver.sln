@@ -9,6 +9,14 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Archer.Quiver.TestAdapter.T
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Archer.Quiver.TestAdapter.Tests.BootStrap", "Tests.Bootstrap\Archer.Quiver.TestAdapter.Tests.BootStrap.fsproj", "{C3133D5A-A183-4F54-9556-EA83FF30E7BA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{1EA6F5D3-85C2-4521-B176-4A32A8023B57}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		gittey-config.json = gittey-config.json
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
