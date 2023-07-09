@@ -31,6 +31,10 @@
             "command": "gittey test && git push"
         },
         {
+            "name": "start",
+            "command": "git pull && gittey push && start ./Archer.Quiver.sln"
+        },
+        {
             "name": "build",
             "command": "dotnet build"
         },
