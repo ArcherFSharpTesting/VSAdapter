@@ -37,9 +37,17 @@ and DefaultFileInfo (file: FileInfo) =
             file.Directory
             |> DefaultDirectoryInfo
             :> IDirectoryInfoWrapper
+
+type IDirectoryWrapper =
+    abstract member GetCurrentDirectory : unit -> IDirectoryInfoWrapper
+    
+type DefaultDirectory () =
+    interface IDirectoryWrapper with
+        member _.GetCurrentDirectory () = Directory.GetCurrentDirectory () |> DefaultDirectoryInfo :> IDirectoryInfoWrapper
         
             
 let path = DefaultPath () :> IPathWrapper
+let directory = DefaultDirectory () : IDirectoryWrapper
 
 let getDirectoryInfo (path: string) =
     path
