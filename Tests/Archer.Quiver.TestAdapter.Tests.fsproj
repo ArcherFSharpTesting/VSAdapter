@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
     <Compile Include="File System getDirectory Should.fs" />
     <Compile Include="File System getPossibleTestFilesByGetter Should.fs" />
   </ItemGroup>

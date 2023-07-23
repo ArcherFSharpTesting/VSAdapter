@@ -1,21 +1,22 @@
 ﻿module Archer.Quiver.TestAdapter.FileSystem
 
 open System.IO
+open Archer.Quiver.TestAdapter.FileWrappers
 
 let getDirectory (fileName: string) =
-    if Path.IsPathRooted fileName then
-        let fi = fileName |> FileInfo
+    if path.IsPathRooted fileName then
+        let fi = fileName |> getFileInfo
         fi.Directory
     else
-        Directory.GetCurrentDirectory () |> DirectoryInfo
+        Directory.GetCurrentDirectory () |> getDirectoryInfo
     
-let getPossibleTestFilesByGetter (fileGetter: string -> FileInfo array): FileInfo [] =
+let getPossibleTestFilesByGetter (fileGetter: string -> IFileInfoWrapper array): IFileInfoWrapper [] =
     [|
         fileGetter "*.dll"
         fileGetter "*.exe"
     |] |> Array.concat
         
-let getFiles (dir: DirectoryInfo) (searchPattern: string) =
+let getFiles (dir: IDirectoryInfoWrapper) (searchPattern: string) =
     dir.GetFiles searchPattern
     
-let getPossibleTestFiles (dir: DirectoryInfo) = dir |> getFiles |> getPossibleTestFilesByGetter
+let getPossibleTestFiles (dir: IDirectoryInfoWrapper) = dir |> getFiles |> getPossibleTestFilesByGetter
