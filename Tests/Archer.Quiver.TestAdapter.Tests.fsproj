@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <Compile Include="File System getDirectory Should.fs" />
-    <Compile Include="File System getPossibleTestFilesByGetter Should.fs" />
+    <Compile Include="AssemblyLocator GetPossibleTestFiles Should.fs" />
   </ItemGroup>
 
   <ItemGroup>

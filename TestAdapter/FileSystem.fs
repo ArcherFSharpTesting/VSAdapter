@@ -50,6 +50,8 @@ type AssemblyLocator (dir: IDirectoryInfoWrapper) =
             this.GetFiles "*.exe"
         |] |> Array.concat
         
+    member this.Locator with get () = this :> IAssemblyLocator
+        
     interface IAssemblyLocator with
         member this.GetPossibleTestFiles () =
             this.GetAllLibraries ()

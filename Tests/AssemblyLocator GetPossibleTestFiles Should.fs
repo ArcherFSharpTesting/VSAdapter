@@ -1,11 +1,17 @@
-﻿module Archer.Quiver.TestAdapter.Tests.``File System getPossibleTestFilesByGetter Should``
+﻿module Archer.Quiver.TestAdapter.Tests.``AssemblyLocator GetPossibleTestFiles Should``
 
 open Archer
 open Archer.Arrows
 open Archer.Quiver.TestAdapter
+open Archer.Quiver.TestAdapter.FileSystem
 open Archer.Quiver.TestAdapter.FileWrappers
 
 let feature = Arrow.NewFeature ()
+
+type private TestDir (fileGetter: string -> IFileInfoWrapper array, fullName) =
+    interface IDirectoryInfoWrapper with
+        member _.GetFiles pattern = fileGetter pattern
+        member _.FullName with get () = fullName
 
 let ``Call file getter with "*.dll" and "*.exe"`` =
     feature.Test (fun _ ->

@@ -29,7 +29,7 @@ runner.RunnerLifecycleEvent
 
 runner
 |> addMany [
-    ``File System getPossibleTestFilesByGetter Should``.feature.GetTests ()
+    ``AssemblyLocator GetPossibleTestFiles Should``.feature.GetTests ()
     ``AssemblyLocator Should``.feature.GetTests ()
 ]
 |> runAndReport
