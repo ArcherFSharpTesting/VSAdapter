@@ -1,28 +1,30 @@
-﻿module Archer.Quiver.TestAdapter.Tests.``File System getDirectory Should``
+﻿module Archer.Quiver.TestAdapter.Tests.``AssemblyLocator Should``
 
 open System.IO
 open Archer
 open Archer.Arrows
 open Archer.Quiver.TestAdapter
+open Archer.Quiver.TestAdapter.FileSystem
+open Archer.Quiver.TestAdapter.FileWrappers
 
 let feature = Arrow.NewFeature ()
-
-let ``Return a directory info from a source string without full path`` =
-     feature.Test (fun _ ->
-        let expected = (Directory.GetCurrentDirectory () |> DirectoryInfo).FullName
-         
+     
+let ``Have a directory equal to the current directory when constructed with a file name that has no path`` =
+    feature.Test (fun _ ->
+        let expected = directory.GetCurrentDirectory().FullName
+        
         "Archer.TestAdapter.Tests.dll"
-        |> FileSystem.getDirectory
-        |> fun di -> di.FullName
+        |> AssemblyLocator
+        |> fun di -> di.Directory.FullName
         |> Should.BeEqualTo expected
     )
-    
-let ``Return a directory for a source with a path`` =
-     feature.Test (fun _ ->
+     
+let ``Have a directory equal to the path of a file passed to the constructor`` =
+    feature.Test (fun _ ->
         let expected = @"C:\MyTestPath"
          
-        @"C:\MyTestPath\Directory.GetCurrentDirectory () |> DirectoryInfo"
-        |> FileSystem.getDirectory
-        |> fun di -> di.FullName
+        @"C:\MyTestPath\Archer.TestAdapter.Tests.dll"
+        |> AssemblyLocator
+        |> fun di -> di.Directory.FullName
         |> Should.BeEqualTo expected
     )
