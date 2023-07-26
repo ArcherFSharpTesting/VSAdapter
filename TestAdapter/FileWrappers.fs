@@ -46,8 +46,8 @@ type DefaultDirectory () =
         member _.GetCurrentDirectory () = Directory.GetCurrentDirectory () |> DefaultDirectoryInfo :> IDirectoryInfoWrapper
         
             
-let path = DefaultPath () :> IPathWrapper
-let directory = DefaultDirectory () : IDirectoryWrapper
+let pathHelper = DefaultPath () :> IPathWrapper
+let directoryHelper = DefaultDirectory () : IDirectoryWrapper
 
 let getDirectoryInfo (path: string) =
     path

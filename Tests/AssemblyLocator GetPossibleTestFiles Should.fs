@@ -12,8 +12,14 @@ type private TestDir (fileGetter: string -> IFileInfoWrapper array, fullName) =
     interface IDirectoryInfoWrapper with
         member _.GetFiles pattern = fileGetter pattern
         member _.FullName with get () = fullName
+        
+let private getLocator (dir: IDirectoryInfoWrapper) =
+    AssemblyLocator dir :> IAssemblyLocator
+    
+let private getTestDir fileGetter =
+    TestDir (fileGetter, @"S:\ome\Path")
 
-let ``Call file getter with "*.dll" and "*.exe"`` =
+let ``Call directory info wrapper get files with "*.dll" and "*.exe"`` =
     feature.Test (fun _ ->
         let calls = System.Collections.Generic.List<string> ()
         
@@ -21,7 +27,10 @@ let ``Call file getter with "*.dll" and "*.exe"`` =
             calls.Add filter
             Array.empty<IFileInfoWrapper>
             
-        FileSystem.getPossibleTestFilesByGetter fileGetter |> ignore
+        let dir = TestDir (fileGetter, @"S:\ome\dive")
+        let locator = getLocator dir
+        locator.GetPossibleTestFiles () |> ignore
+        
         
         calls
         |> Seq.toList
@@ -40,8 +49,10 @@ let ``Return the any dll files found`` =
             else
                 expectedExes
                 
-        fileGetter
-        |> FileSystem.getPossibleTestFilesByGetter
+        let locator = fileGetter |> getTestDir |> getLocator
+                
+        locator
+        |> getPossibleTestFiles
         |> Should.BeEqualTo expected
     )
     
@@ -57,8 +68,11 @@ let ``Return any exe files`` =
             else
                 expectedExes
                 
-        fileGetter
-        |> FileSystem.getPossibleTestFilesByGetter
+        let dir = fileGetter |> getTestDir
+        let locator = getLocator dir
+                
+        locator
+        |> getPossibleTestFiles
         |> Should.BeEqualTo expected
     )
     
@@ -74,7 +88,12 @@ let ``Return both dll and exe files`` =
             else
                 expectedExes
                 
-        fileGetter
-        |> FileSystem.getPossibleTestFilesByGetter
+        let locator =
+            fileGetter
+            |> getTestDir
+            |> getLocator
+                
+        locator
+        |> getPossibleTestFiles
         |> Should.BeEqualTo expected
     )

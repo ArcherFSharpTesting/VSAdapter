@@ -9,7 +9,7 @@ let feature = Arrow.NewFeature ()
      
 let ``Have a directory equal to the current directory when constructed with a file name that has no path`` =
     feature.Test (fun _ ->
-        let expected = directory.GetCurrentDirectory().FullName
+        let expected = directoryHelper.GetCurrentDirectory().FullName
         
         "Archer.TestAdapter.Tests.dll"
         |> AssemblyLocator
