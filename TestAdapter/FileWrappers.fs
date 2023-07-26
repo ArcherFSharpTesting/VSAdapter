@@ -11,6 +11,7 @@ type IDirectoryInfoWrapper =
     
 and IFileInfoWrapper =
     abstract member Directory : IDirectoryInfoWrapper with get
+    abstract member FullName: string with get
     
 type DefaultPath () =
     interface IPathWrapper with
@@ -37,6 +38,8 @@ and DefaultFileInfo (file: FileInfo) =
             file.Directory
             |> DefaultDirectoryInfo
             :> IDirectoryInfoWrapper
+            
+        member _.FullName with get () = file.FullName
 
 type IDirectoryWrapper =
     abstract member GetCurrentDirectory : unit -> IDirectoryInfoWrapper
@@ -45,7 +48,6 @@ type DefaultDirectory () =
     interface IDirectoryWrapper with
         member _.GetCurrentDirectory () = Directory.GetCurrentDirectory () |> DefaultDirectoryInfo :> IDirectoryInfoWrapper
         
-            
 let pathHelper = DefaultPath () :> IPathWrapper
 let directoryHelper = DefaultDirectory () : IDirectoryWrapper
 

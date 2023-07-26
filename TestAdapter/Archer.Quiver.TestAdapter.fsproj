@@ -9,6 +9,7 @@
     <Compile Include="Setup.fs" />
     <Compile Include="FileWrappers.fs" />
     <Compile Include="FileSystem.fs" />
+    <Compile Include="AssemblySystem.fs" />
   </ItemGroup>
 
   <ItemGroup>
