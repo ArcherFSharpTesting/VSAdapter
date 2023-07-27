@@ -5,7 +5,7 @@ open System.IO
 
 type IPathWrapper =
     abstract member IsPathRooted : path:string -> bool
-    abstract member Join : [<ParamArray>]paths:string array -> string
+    abstract member Combine : [<ParamArray>]paths:string array -> string
     
 type IDirectoryInfoWrapper =
     abstract member GetFiles : searchPattern:string -> IFileInfoWrapper array
@@ -20,8 +20,8 @@ type DefaultPath () =
     interface IPathWrapper with
         member _.IsPathRooted (path: string) =
             Path.IsPathRooted path
-        member _.Join ([<ParamArray>]paths: string array) =
-            Path.Join paths
+        member _.Combine ([<ParamArray>]paths: string array) =
+            Path.Combine paths
             
 type DefaultDirectoryInfo (dir: DirectoryInfo) =
     new (fullName: string) =

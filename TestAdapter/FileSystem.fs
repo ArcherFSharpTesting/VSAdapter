@@ -39,3 +39,9 @@ type AssemblyLocator (dir: IDirectoryInfoWrapper) =
     
 let getPossibleTestFiles (locator: #IAssemblyLocator) =
     locator.GetPossibleTestFiles ()
+    
+let getAssemblyLocatorFromExample (examplePath: string) =
+    examplePath
+    |> AssemblyLocator
+    :> IAssemblyLocator
+    

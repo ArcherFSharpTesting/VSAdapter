@@ -2,9 +2,11 @@
 
 open System
 open System.Reflection
+open Archer
 open Archer.CoreTypes.InternalTypes
 open Archer.Quiver.TestAdapter.FileSystem
 open Archer.Quiver.TestAdapter.FileWrappers
+open Archer.Quiver.TestAdapter.TestCaseCache
 open Microsoft.VisualStudio.TestPlatform.ObjectModel
 
 type IPropertyWrapper =
@@ -43,12 +45,21 @@ type TypeWrapper (t: Type) =
             
 type AssemblyWrapper (assembly: Assembly) =
     new (file: IFileInfoWrapper) =
-        AssemblyWrapper (Assembly.LoadFile file.FullName)
+        let assembly =
+            try
+                Assembly.LoadFile file.FullName
+            with
+            | _ -> Assembly.GetCallingAssembly ()
+            
+        AssemblyWrapper assembly
         
     interface IAssemblyWrapper with
         member _.GetExportedTypes () =
-            assembly.GetExportedTypes ()
-            |> Array.map (fun t -> t |> TypeWrapper :> ITypeWrapper)
+            try
+                assembly.GetExportedTypes ()
+                |> Array.map (fun t -> t |> TypeWrapper :> ITypeWrapper)
+            with
+            | _ -> [||]
             
 type TestLoader (assembly: IAssemblyWrapper) =
     new (file: IFileInfoWrapper) =
@@ -67,15 +78,34 @@ let getTestLoadersThroughAssembly (getLocator: string -> #IAssemblyLocator) (exa
     locator.GetPossibleTestFiles ()
     |> Array.map TestLoader
     
-let getTestLoaders = getTestLoadersThroughAssembly AssemblyLocator
-
 let getTests (loaders: #ITestLoader array) =
     loaders
     |> Array.map (fun l -> l.GetTests ())
     |> Array.concat
     
 let getTestCase (pathHelper: IPathWrapper) (test: ITest) =
-     let getTestFullName (test: ITest) = $"%s{test.ContainerPath}.%s{test.ContainerName}.%s{test.TestName}"
-     
-     let tc = TestCase (test |> getTestFullName, ExecutorUri |> Uri, pathHelper.Join (test.Location.FilePath, test.Location.FileName))
-     tc
+    let tc = TestCase (test |> getTestFullName, ExecutorUri |> Uri, pathHelper.Combine (test.Location.FilePath, test.Location.FileName))
+    
+    test.Tags
+    |> Seq.iter (fun tag ->
+        let testTrait =
+            match tag with
+            | Category s -> Trait ("Category", s)
+            | Only -> Trait ("Only", "true")
+            | Serial -> Trait ("Serial", "true")
+            
+        tc.Traits.Add testTrait
+    )
+    
+    tc.LineNumber <- test.Location.LineNumber
+    tc
+    
+let getTestCases (pathHelper: IPathWrapper) (tests: ITest array) =
+    tests
+    |> Array.map (getTestCase pathHelper)
+    
+let buildTestCasesWithPath (pathHelper: IPathWrapper) (loaders: #ITestLoader array) =
+    loaders
+    |> getTests
+    |> Array.map addCache
+    |> getTestCases pathHelper

@@ -9,6 +9,7 @@
     <Compile Include="Setup.fs" />
     <Compile Include="FileWrappers.fs" />
     <Compile Include="FileSystem.fs" />
+    <Compile Include="TestCaseCache.fs" />
     <Compile Include="AssemblySystem.fs" />
     <Compile Include="QuiverDiscoverer.fs" />
     <Compile Include="QuiverExecutor.fs" />

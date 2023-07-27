@@ -2,6 +2,8 @@
 
 open System
 open System.IO
+open Archer.Quiver.TestAdapter.AssemblySystem
+open Archer.Quiver.TestAdapter.FileSystem
 open Archer.Quiver.TestAdapter.FileWrappers
 open Microsoft.VisualStudio.TestPlatform.ObjectModel
 open Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter
@@ -44,6 +46,13 @@ type QuiverDiscoverer (forbidden: IDirectoryInfoWrapper list) =
             
         QuiverDiscoverer f
         
+    member _.DiscoverTests (sources: string seq, discoveryContext: IDiscoveryContext, logger: IMessageLogger, discoverySink: ITestCaseDiscoverySink) =
+        sources
+        |> Seq.map (getTestLoadersThroughAssembly AssemblyLocator >> buildTestCasesWithPath pathHelper)
+        |> Seq.toArray
+        |> Array.concat
+        |> Array.iter discoverySink.SendTestCase    
+        
     interface ITestDiscoverer with
-        member _.DiscoverTests (sources: string seq, discoveryContext: IDiscoveryContext, logger: IMessageLogger, discoverySink: ITestCaseDiscoverySink) =
-            failwith "todo"
+        member this.DiscoverTests (sources: string seq, discoveryContext: IDiscoveryContext, logger: IMessageLogger, discoverySink: ITestCaseDiscoverySink) =
+            this.DiscoverTests (sources, discoveryContext, logger, discoverySink)
