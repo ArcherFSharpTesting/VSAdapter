@@ -3,7 +3,9 @@
 open System
 open System.Reflection
 open Archer.CoreTypes.InternalTypes
+open Archer.Quiver.TestAdapter.FileSystem
 open Archer.Quiver.TestAdapter.FileWrappers
+open Microsoft.VisualStudio.TestPlatform.ObjectModel
 
 type IPropertyWrapper =
     abstract member IsAssignableFrom<'desiredType> : unit -> bool
@@ -49,6 +51,9 @@ type AssemblyWrapper (assembly: Assembly) =
             |> Array.map (fun t -> t |> TypeWrapper :> ITypeWrapper)
             
 type TestLoader (assembly: IAssemblyWrapper) =
+    new (file: IFileInfoWrapper) =
+        TestLoader (AssemblyWrapper file)
+        
     interface ITestLoader with
         member _.GetTests () =
             assembly.GetExportedTypes ()
@@ -56,3 +61,21 @@ type TestLoader (assembly: IAssemblyWrapper) =
                 t.GetPublicStaticPropertiesOf<ITest>()
             )
             |> Array.concat
+            
+let getTestLoadersThroughAssembly (getLocator: string -> #IAssemblyLocator) (exampleFile: string) =
+    let locator = getLocator exampleFile
+    locator.GetPossibleTestFiles ()
+    |> Array.map TestLoader
+    
+let getTestLoaders = getTestLoadersThroughAssembly AssemblyLocator
+
+let getTests (loaders: #ITestLoader array) =
+    loaders
+    |> Array.map (fun l -> l.GetTests ())
+    |> Array.concat
+    
+let getTestCase (pathHelper: IPathWrapper) (test: ITest) =
+     let getTestFullName (test: ITest) = $"%s{test.ContainerPath}.%s{test.ContainerName}.%s{test.TestName}"
+     
+     let tc = TestCase (test |> getTestFullName, ExecutorUri |> Uri, pathHelper.Join (test.Location.FilePath, test.Location.FileName))
+     tc

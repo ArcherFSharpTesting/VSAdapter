@@ -46,4 +46,4 @@ type QuiverDiscoverer (forbidden: IDirectoryInfoWrapper list) =
         
     interface ITestDiscoverer with
         member _.DiscoverTests (sources: string seq, discoveryContext: IDiscoveryContext, logger: IMessageLogger, discoverySink: ITestCaseDiscoverySink) =
-            failwith "Not implemented"
+            failwith "todo"
