@@ -8,6 +8,7 @@ type IPathWrapper =
 type IDirectoryInfoWrapper =
     abstract member GetFiles : searchPattern:string -> IFileInfoWrapper array
     abstract member FullName : string with get
+    abstract member Exists : bool with get
     
 and IFileInfoWrapper =
     abstract member Directory : IDirectoryInfoWrapper with get
@@ -29,6 +30,8 @@ type DefaultDirectoryInfo (dir: DirectoryInfo) =
             |> Array.map (fun fi -> fi |> DefaultFileInfo :> IFileInfoWrapper)
             
         member _.FullName with get () = dir.FullName
+        
+        member _.Exists with get () = dir.Exists
         
 and DefaultFileInfo (file: FileInfo) =
     new (fullName: string) =

@@ -10,6 +10,7 @@
     <Compile Include="FileWrappers.fs" />
     <Compile Include="FileSystem.fs" />
     <Compile Include="AssemblySystem.fs" />
+    <Compile Include="Discoverers.fs" />
   </ItemGroup>
 
   <ItemGroup>

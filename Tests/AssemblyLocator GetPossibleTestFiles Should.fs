@@ -12,6 +12,7 @@ type private TestDir (fileGetter: string -> IFileInfoWrapper array, fullName) =
     interface IDirectoryInfoWrapper with
         member _.GetFiles pattern = fileGetter pattern
         member _.FullName with get () = fullName
+        member _.Exists with get () = true
         
 let private getLocator (dir: IDirectoryInfoWrapper) =
     AssemblyLocator dir :> IAssemblyLocator
