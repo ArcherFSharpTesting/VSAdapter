@@ -11,6 +11,7 @@
     <Compile Include="FileSystem.fs" />
     <Compile Include="TestCaseCache.fs" />
     <Compile Include="AssemblySystem.fs" />
+    <Compile Include="TestRunner.fs" />
     <Compile Include="QuiverDiscoverer.fs" />
     <Compile Include="QuiverExecutor.fs" />
   </ItemGroup>

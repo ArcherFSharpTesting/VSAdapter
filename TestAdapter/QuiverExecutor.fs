@@ -26,64 +26,16 @@ type QuiverExecutor () =
 
         let archerFramework = bow.Runner ()
         
-        archerFramework.RunnerLifecycleEvent
-        |> Event.add (fun args ->
-            match args with
-            | RunnerStartExecution _ ->
-                printfn ""
-            | RunnerTestLifeCycle (test, testEventLifecycle, _) ->
-                let tc = testCases[test |> getTestFullName]
-                
-                match testEventLifecycle with
-                | TestStartExecution _cancelEventArgs ->
-                    tc|> frameworkHandle.RecordStart
-                | TestEndExecution testExecutionResult ->
-                    let vsTestResult = TestResult tc
-                    let indenter = Indent.IndentTransformer 1
-                    
-                    let errorMessage = defaultDetailedTestExecutionResultTransformer indenter test None testExecutionResult
-                    let errorMessage = errorMessage.Trim ()
-                    match testExecutionResult with
-                    | TestExecutionResult testResult ->
-                        match testResult with
-                        | TestFailure failure ->
-                            let testOutcome = TestOutcome.Failed
-                            match failure with
-                            | TestIgnored _ ->
-                                vsTestResult.ErrorMessage <- errorMessage
-                                vsTestResult.Outcome <- TestOutcome.Skipped
-                            | _ ->
-                                vsTestResult.ErrorMessage <- errorMessage
-                                vsTestResult.Outcome <- testOutcome
-                        | TestSuccess ->
-                            let testOutcome = TestOutcome.Passed
-                            vsTestResult.Outcome <- testOutcome
-                            
-                    | _ ->
-                        let testOutcome = TestOutcome.Failed
-                        vsTestResult.Outcome <- testOutcome
-                        vsTestResult.ErrorMessage <- errorMessage
-                    
-                
-                    vsTestResult
-                        |> frameworkHandle.RecordResult
-                    (tc, vsTestResult.Outcome)
-                        |> frameworkHandle.RecordEnd
-                        
-                | _ -> ()
-            | RunnerEndExecution ->
-                printfn "\n"
-        )
-        
+        let runner = TestRunner (archerFramework, (fun id -> testCases[id]), frameworkHandle)
         let selectedTests = 
             testCases.Keys
             |> Seq.map getFromCache
-        
-        let runTests (runner: IRunner) = runner.Run () |> ignore
             
-        selectedTests
-        |> archerFramework.AddTests
-        |> runTests
+        let run (runner: TestRunner) = runner.Run () |> ignore
+        
+        runner.AddTests selectedTests
+        |> run
+        
             
     member this.Cancel () = () //failwith "todo"
     
