@@ -48,7 +48,7 @@ type QuiverDiscoverer (forbidden: IDirectoryInfoWrapper list) =
         
     member _.DiscoverTests (sources: string seq, discoveryContext: IDiscoveryContext, logger: IMessageLogger, discoverySink: ITestCaseDiscoverySink) =
         sources
-        |> Seq.map (getTestLoadersThroughAssembly AssemblyLocator >> buildTestCasesWithPath pathHelper)
+        |> Seq.map (getTestLoadersThroughAssembly FileLoader >> buildTestCasesWithPath pathHelper)
         |> Seq.toArray
         |> Array.concat
         |> Array.iter discoverySink.SendTestCase    

@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="AssemblyLocator Should.fs" />
-    <Compile Include="AssemblyLocator GetPossibleTestFiles Should.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Archer.Arrow.Lib" Version="0.0.0.43" />
     <PackageReference Include="Archer.CoreTypes.Lib" Version="0.0.13.42" />
     <PackageReference Include="Archer.Fletching.Lib" Version="0.0.0.33" />
@@ -20,6 +15,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestAdapter\Archer.Quiver.TestAdapter.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="FileLoader Should.fs" />
   </ItemGroup>
 
 </Project>

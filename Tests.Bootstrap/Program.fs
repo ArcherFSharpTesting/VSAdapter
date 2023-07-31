@@ -4,7 +4,6 @@ open Archer.CoreTypes.InternalTypes
 open Archer.CoreTypes.InternalTypes.RunnerTypes
 open Archer.Logger.Summaries
 open Archer.MicroLang
-open Archer.Quiver.TestAdapter.Tests
 
 let private runner = bow.Runner ()
 
@@ -29,7 +28,5 @@ runner.RunnerLifecycleEvent
 
 runner
 |> addMany [
-    ``AssemblyLocator GetPossibleTestFiles Should``.feature.GetTests ()
-    ``AssemblyLocator Should``.feature.GetTests ()
 ]
 |> runAndReport

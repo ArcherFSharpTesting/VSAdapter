@@ -75,13 +75,11 @@ type TestLoader (assembly: IAssemblyWrapper) =
             
 let getTestLoadersThroughAssembly (getLocator: string -> #IAssemblyLocator) (exampleFile: string) =
     let locator = getLocator exampleFile
-    locator.GetPossibleTestFiles ()
-    |> Array.map TestLoader
+    locator.GetPossibleTestFile ()
+    |> TestLoader
     
-let getTests (loaders: #ITestLoader array) =
-    loaders
-    |> Array.map (fun l -> l.GetTests ())
-    |> Array.concat
+let getTests (loaders: #ITestLoader) =
+    loaders.GetTests ()
     
 let getTestCase (pathHelper: IPathWrapper) (test: ITest) =
     let tc = TestCase (test |> getTestFullName, ExecutorUri |> Uri, pathHelper.Combine (test.Location.FilePath, test.Location.FileName))
@@ -104,7 +102,7 @@ let getTestCases (pathHelper: IPathWrapper) (tests: ITest array) =
     tests
     |> Array.map (getTestCase pathHelper)
     
-let buildTestCasesWithPath (pathHelper: IPathWrapper) (loaders: #ITestLoader array) =
+let buildTestCasesWithPath (pathHelper: IPathWrapper) (loaders: #ITestLoader) =
     loaders
     |> getTests
     |> Array.map addCache

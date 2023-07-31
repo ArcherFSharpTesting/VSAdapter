@@ -40,9 +40,16 @@ type QuiverExecutor () =
     member this.Cancel () = () //failwith "todo"
     
     member this.RunTests (sources: string seq, runContext: IRunContext, frameworkHandle: IFrameworkHandle): unit =
+        let getter (source: string) =
+            let f = FileLoader source
+            f
+            :> IAssemblyLocator
+            |> (fun t -> t.GetPossibleTestFile ())
+            |> TestLoader
+            
         let tests =
             sources
-            |> Seq.map (getTestLoadersThroughAssembly AssemblyLocator >> buildTestCasesWithPath pathHelper)
+            |> Seq.map (getter >> buildTestCasesWithPath pathHelper)
             |> Seq.toArray
             |> Array.concat
             

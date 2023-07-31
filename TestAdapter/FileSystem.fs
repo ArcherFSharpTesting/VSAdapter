@@ -3,45 +3,23 @@
 open Archer.Quiver.TestAdapter.FileWrappers
 
 type IAssemblyLocator =
-    abstract member GetPossibleTestFiles : unit -> IFileInfoWrapper array
-
-type AssemblyLocator (dir: IDirectoryInfoWrapper) =
-    new (exampleFileName: string, path: IPathWrapper, directory: IDirectoryWrapper) =
-        if path.IsPathRooted exampleFileName then
-            let fi = exampleFileName |> getFileInfo
-            
-            AssemblyLocator fi.Directory
-            
-        else
-            AssemblyLocator (directory.GetCurrentDirectory ())
-            
-    new (exampleFileName: string) =
-        AssemblyLocator (exampleFileName, pathHelper, directoryHelper)
-        
-    member _.Directory with get () = dir
+    abstract member GetPossibleTestFile : unit -> IFileInfoWrapper
     
-    abstract member GetFiles : searchPattern:string -> IFileInfoWrapper array
-    default this.GetFiles searchPattern =
-        dir.GetFiles searchPattern
-        
-    abstract member GetAllLibraries : unit -> IFileInfoWrapper array
-    default this.GetAllLibraries () =
-        [|
-            this.GetFiles "*.dll"
-            this.GetFiles "*.exe"
-        |] |> Array.concat
-        
-    member this.Locator with get () = this :> IAssemblyLocator
-        
+type FileLoader (sourceFile: string, pathHelper: IPathWrapper, directoryHelper: IDirectoryWrapper, fileGetter: string -> IFileInfoWrapper) =
+    let filePath =
+        if pathHelper.IsPathRooted sourceFile then
+            sourceFile
+        else
+            let path = directoryHelper.GetCurrentDirectory().FullName
+            pathHelper.Combine (path, sourceFile)
+            
+    new (sourceFile: string) =
+        FileLoader (sourceFile, pathHelper, directoryHelper, fun s -> DefaultFileInfo s)
+            
     interface IAssemblyLocator with
-        member this.GetPossibleTestFiles () =
-            this.GetAllLibraries ()
+        member _.GetPossibleTestFile () = filePath |> fileGetter
+        
     
 let getPossibleTestFiles (locator: #IAssemblyLocator) =
-    locator.GetPossibleTestFiles ()
-    
-let getAssemblyLocatorFromExample (examplePath: string) =
-    examplePath
-    |> AssemblyLocator
-    :> IAssemblyLocator
-    
+    locator.GetPossibleTestFile ()
+        
