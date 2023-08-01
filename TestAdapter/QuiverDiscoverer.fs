@@ -14,17 +14,7 @@ open Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging
 [<DefaultExecutorUri (ExecutorUri)>]
 type QuiverDiscoverer (forbidden: IDirectoryInfoWrapper list) =
     new () =
-        let f =
-            [
-                Environment.GetEnvironmentVariable "ProgramW6432"
-                Environment.GetEnvironmentVariable "ProgramFiles(x86)"
-                Environment.GetEnvironmentVariable "windir"
-            ]
-            |> List.filter (fun path -> String.IsNullOrEmpty path |> not)
-            |> List.map (fun d -> d |> DefaultDirectoryInfo :> IDirectoryInfoWrapper)
-            
-            
-        QuiverDiscoverer f
+        QuiverDiscoverer forbiddenDirectories
         
     new (forbidden: DirectoryInfo seq) =
         let f =
@@ -34,7 +24,6 @@ type QuiverDiscoverer (forbidden: IDirectoryInfoWrapper list) =
             |> List.filter (fun d -> d.Exists)
             
         QuiverDiscoverer f
-        
         
     new (forbiddenPaths: string seq) =
         let f = 

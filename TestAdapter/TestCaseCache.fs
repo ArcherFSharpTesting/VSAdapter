@@ -1,6 +1,5 @@
 ﻿module Archer.Quiver.TestAdapter.TestCaseCache
 
-open Archer
 open Archer.CoreTypes.InternalTypes
 
 let private cache = System.Collections.Generic.Dictionary<string, ITest>()
