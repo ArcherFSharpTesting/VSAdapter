@@ -47,14 +47,25 @@ let private feature = Arrow.NewFeature (
 )
 
 let ``Return a rooted File`` =
-    feature.Test (
-        fun a ->
-            let dir = a.DirBuilder @"B:\bad\dir"
-            let path = a.PathBuilder true
-            
-            let loader = FileLoader ("myFile.dll", path, dir, a.FileInfoBuilder) :> IAssemblyLocator
-            
-            let f = loader.GetPossibleTestFile ()
-            f.FullName
-            |> Should.BeEqualTo "myFile.dll"
+    feature.Test (fun a ->
+        let dir = a.DirBuilder @"B:\bad\dir"
+        let path = a.PathBuilder true
+        
+        let loader = FileLoader ("myFile.dll", path, dir, a.FileInfoBuilder) :> IAssemblyLocator
+        
+        let f = loader.GetPossibleTestFile ()
+        f.FullName
+        |> Should.BeEqualTo "myFile.dll"
+    )
+    
+let ``Return a file with path for non rooted file`` =
+    feature.Test (fun a ->
+        let dir = a.DirBuilder @"M:\y\path"
+        let path = a.PathBuilder false
+        
+        let loader = FileLoader ("myFile.dll", path, dir, a.FileInfoBuilder) :> IAssemblyLocator
+        
+        let f = loader.GetPossibleTestFile ()
+        f.FullName
+        |> Should.BeEqualTo @"M:\y\path\myFile.dll"
     )
