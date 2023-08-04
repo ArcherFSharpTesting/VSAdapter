@@ -24,7 +24,15 @@
     "aliases": [
         {
             "name": "test",
-            "command": "cls && dotnet run --project ./Tests.Bootstrap && dotnet test && gittey commit"
+            "command": "cls; gittey check && gittey cover:convert && gittey commit"
+        },
+        {
+            "name": "check",
+            "command": "dotnet-coverage collect -f xml -s ./coverage.settings.xml dotnet test"
+        },
+        {
+            "name": "cover:convert",
+            "command": "npx rimraf ./coverage/ && reportgenerator -reports:./output.xml -targetdir:coverage"
         },
         {
             "name": "push",
