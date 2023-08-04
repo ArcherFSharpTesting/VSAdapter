@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Compile Include="FileLoader Should.fs" />
+    <Compile Include="TestLoader Should.fs" />
   </ItemGroup>
 
 </Project>

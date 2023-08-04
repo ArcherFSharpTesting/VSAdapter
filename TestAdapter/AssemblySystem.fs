@@ -73,6 +73,12 @@ type TestLoader (assembly: IAssemblyWrapper) =
             )
             |> Array.concat
             
+let getTestLoaderFromAssembly (assembly: IAssemblyWrapper) =
+    TestLoader assembly :> ITestLoader
+    
+let getTestLoaderFromFile (file: IFileInfoWrapper) =
+    TestLoader file :> ITestLoader
+            
 let getTestLoadersThroughAssembly (getLocator: string -> #IAssemblyLocator) (exampleFile: string) =
     let locator = getLocator exampleFile
     locator.GetPossibleTestFile ()
