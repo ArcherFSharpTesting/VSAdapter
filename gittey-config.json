@@ -40,7 +40,7 @@
         },
         {
             "name": "start",
-            "command": "git pull && gittey push && start ./Archer.Quiver.sln"
+            "command": "git pull && gittey push && start ./coverage/index.htm && start ./Archer.Quiver.sln"
         },
         {
             "name": "build",
