@@ -5,7 +5,8 @@ open Archer.CoreTypes.InternalTypes
 let private cache = System.Collections.Generic.Dictionary<string, ITest>()
 
 let addCache (test: ITest) =
-    cache[(test |> getTestFullName)] <- test
+    let key = (test |> getTestFullName)
+    cache[key] <- test
     test
     
 let getFromCache (name: string) =
