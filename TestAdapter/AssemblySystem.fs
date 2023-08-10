@@ -10,11 +10,17 @@ open Archer.Quiver.TestAdapter.TestCaseCache
 open Microsoft.VisualStudio.TestPlatform.ObjectModel
 
 type IPropertyWrapper =
+    abstract member PropertyType : ITypeWrapper with get
     abstract member IsAssignableFrom<'desiredType> : unit -> bool
     abstract member GetStaticValue<'outPutType> : unit -> 'outPutType
+    abstract member IsAssignableTo<'desiredType> : unit -> bool
     
-type ITypeWrapper =
+and ITypeWrapper =
     abstract member GetPublicStaticPropertiesOf<'outPutType> : unit -> 'outPutType array
+    abstract member IsGenericType : bool with get
+    abstract member GetGenericTypeArguments : unit -> ITypeWrapper array
+    abstract member IsAssignableFrom<'desiredType> : unit -> bool
+    abstract member IsAssignableTo<'desiredType> : unit -> bool
     
 type IAssemblyWrapper =
     abstract member GetExportedTypes: unit -> ITypeWrapper array
@@ -24,24 +30,64 @@ type ITestLoader =
 
 type PropertyWrapper (prop: PropertyInfo) =
     interface IPropertyWrapper with
+        member _.PropertyType with get () =
+            prop.PropertyType
+            |> TypeWrapper
+            :> ITypeWrapper
+            
         member _.IsAssignableFrom<'desiredType> () =
             prop.PropertyType.IsAssignableFrom typeof<'desiredType>
+            
+        member _.IsAssignableTo<'desiredType> () =
+            prop.PropertyType.IsAssignableTo typeof<'desiredType>
             
         member _.GetStaticValue<'outPutType>() =
             null |> prop.GetValue :?> 'outPutType
             
-type TypeWrapper (t: Type) =
+and TypeWrapper (t: Type) =
     member _.GetProperties (bindingFlags: BindingFlags) =
         t.GetProperties bindingFlags
         |> Array.map (fun p -> p |> PropertyWrapper :> IPropertyWrapper)
         
     interface ITypeWrapper with
+        member _.IsAssignableTo<'desiredType> () =
+            t.IsAssignableTo typeof<'desiredType>
+            
+        member _.IsAssignableFrom<'desiredType> () =
+            t.IsAssignableFrom typeof<'desiredType>
+            
+        member _.GetGenericTypeArguments () =
+            t.GenericTypeArguments
+            |> Array.map (fun t -> t |> TypeWrapper :> ITypeWrapper)
+            
+        member _.IsGenericType with get () = t.IsGenericType
+        
         member this.GetPublicStaticPropertiesOf<'outPutType> () =
-            this.GetProperties (BindingFlags.Public ||| BindingFlags.Static ||| BindingFlags.FlattenHierarchy)
-            |> Array.filter (fun prop ->
-                prop.IsAssignableFrom<'outPutType> ()
-            )
-            |> Array.map (fun p -> p.GetStaticValue<'outPutType> ())
+            let props = this.GetProperties (BindingFlags.Public ||| BindingFlags.Static ||| BindingFlags.FlattenHierarchy)
+            
+            let a =
+                props
+                |> Array.filter (fun prop ->
+                    prop.IsAssignableFrom<'outPutType> ()
+                    || prop.IsAssignableTo<'outPutType> ()
+                )
+                |> Array.map (fun p -> p.GetStaticValue<'outPutType> ())
+                
+            let b =
+                props
+                |> Array.filter (fun prop ->
+                    prop.IsAssignableFrom<'outPutType seq> ()
+                    || prop.IsAssignableTo<'outPutType seq> ()
+                )
+                |> Array.map (fun p ->
+                    p.GetStaticValue<'outPutType seq> ()
+                    |> Seq.toArray
+                )
+                |> Array.concat
+                
+                
+            [|a; b|]
+            |> Array.concat
             
 type AssemblyWrapper (assembly: Assembly) =
     new (file: IFileInfoWrapper) =

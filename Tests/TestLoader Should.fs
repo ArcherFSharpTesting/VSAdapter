@@ -23,6 +23,11 @@ let ``Get tests from assembly`` =
                             test3 :> obj :?> 'outPutType
                             test1 :> obj :?> 'outPutType
                         |]
+                        
+                    member _.IsGenericType with get () = false
+                    member _.GetGenericTypeArguments () = [||]
+                    member _.IsAssignableFrom<'desiredType> () = false
+                    member _.IsAssignableTo<'desiredType> () = false
                 }
                 
             let testType2 =
@@ -31,6 +36,11 @@ let ``Get tests from assembly`` =
                         [|
                             test2 :> obj :?> 'outPutType
                         |]
+                        
+                    member _.IsGenericType with get () = false
+                    member _.GetGenericTypeArguments () = [||]
+                    member _.IsAssignableFrom<'desiredType> () = false
+                    member _.IsAssignableTo<'desiredType> () = false
                 }
                 
             let assembly =

@@ -69,3 +69,4 @@ let ``Return a file with path for non rooted file`` =
         f.FullName
         |> Should.BeEqualTo @"M:\y\path\myFile.dll"
     )
+    
