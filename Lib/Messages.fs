@@ -1,5 +1,5 @@
 ﻿[<Microsoft.FSharp.Core.AutoOpen>]
-module Archer.Quiver.Lib.Messages
+module Archer.VSAdapter.Lib.Messages
 
 open Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging
 

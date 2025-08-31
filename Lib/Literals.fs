@@ -1,5 +1,5 @@
 ﻿[<AutoOpen>]
-module Archer.Quiver.Lib.Literals
+module Archer.VSAdapter.Lib.Literals
 
 [<Literal>]
 let ExecutorUri = "executor://ArcherQuiverExecutor"

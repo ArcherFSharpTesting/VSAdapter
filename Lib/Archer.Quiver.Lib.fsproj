@@ -8,9 +8,9 @@
     <Authors>Jason-Kerney</Authors>
     <Description>A test executor to run Archer Tests</Description>
     <Copyright>© Robert Jason Kerney 2023</Copyright>
-    <PackageProjectUrl>https://github.com/ArcherFSharpTesting/Archer.Quiver</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/ArcherFSharpTesting/Archer.Quiver/blob/main/LICENSE</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/ArcherFSharpTesting/Archer.Quiver</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/ArcherFSharpTesting/Archer.VSAdapter</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/ArcherFSharpTesting/Archer.VSAdapter/blob/main/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/ArcherFSharpTesting/Archer.VSAdapter</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>F# FSharp Test Testing Framework Unit UnitTest TestAdapter</PackageTags>
     <PackageReleaseNotes>None</PackageReleaseNotes>
@@ -27,11 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Archer.Arrow.Lib" Version="0.0.0.43" />
-    <PackageReference Include="Archer.Bow.Lib" Version="0.0.9.37" />
-    <PackageReference Include="Archer.CoreTypes.Lib" Version="0.0.13.42" />
-    <PackageReference Include="Archer.Fletching.Lib" Version="0.0.0.33" />
-    <PackageReference Include="Archer.Logger.Lib" Version="0.0.0.6" />
+    <PackageReference Include="Archer.Core" Version="0.0.0.*" />
+    <PackageReference Include="Archer.Runner" Version="0.0.0.*" />
+    <PackageReference Include="Archer.Types" Version="0.0.0.*" />
+    <PackageReference Include="Archer.Validations" Version="0.0.0.*" />
+    <PackageReference Include="Archer.Reporting" Version="0.0.0.*" />
     <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="17.6.3" />
     <PackageReference Update="FSharp.Core" Version="7.0.300" />
   </ItemGroup>

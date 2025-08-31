@@ -1,16 +1,16 @@
-﻿namespace Archer.Quiver.Lib
+﻿namespace Archer.VSAdapter.Lib
 
 open System.Reflection
 open Archer
-open Archer.CoreTypes.InternalTypes
-open Archer.CoreTypes.InternalTypes.RunnerTypes
-open Archer.Logger
-open Archer.Quiver.Lib.TestGetter
-open Archer.Quiver.Lib.Literals
-open Archer.Quiver.Lib.Globals
-open Archer.Logger.Summaries
-open Archer.Logger.Detail
-open Archer.Bow
+open Archer.Types.InternalTypes
+open Archer.Types.InternalTypes.RunnerTypes
+open Archer.Reporting
+open Archer.VSAdapter.Lib.TestGetter
+open Archer.VSAdapter.Lib.Literals
+open Archer.VSAdapter.Lib.Globals
+open Archer.Reporting.Summaries
+open Archer.Reporting.Detail
+open Archer.Runner
 
 open System
 open Microsoft.FSharp.Collections
@@ -62,7 +62,7 @@ type QuiverExecutor () =
                 |> Seq.map (fun t -> t.FullyQualifiedName, t)
                 |> dict
 
-            let archerFramework = bow.Runner ()
+            let archerFramework = runnerFactory.Runner ()
             
             archerFramework.RunnerLifecycleEvent
             |> Event.add (fun args ->

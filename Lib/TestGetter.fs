@@ -1,11 +1,11 @@
-﻿module Archer.Quiver.Lib.TestGetter
+﻿module Archer.VSAdapter.Lib.TestGetter
 
 open System
 open System.IO
 open Archer
 open Microsoft.VisualStudio.TestPlatform.ObjectModel
 
-open Archer.Quiver.Lib.Globals
+open Archer.VSAdapter.Lib.Globals
 
 let getPath (source: string) =
     if Path.IsPathRooted source then source |> FileInfo

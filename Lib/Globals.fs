@@ -1,10 +1,10 @@
-﻿module Archer.Quiver.Lib.Globals
+﻿module Archer.VSAdapter.Lib.Globals
 
 open System
 open System.Collections.Generic
 open System.IO
 open System.Reflection
-open Archer.CoreTypes.InternalTypes
+open Archer.Types.InternalTypes
 open Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging
 
 let getTestFullName (test: ITest) = $"%s{test.ContainerPath}.%s{test.ContainerName}.%s{test.TestName}"

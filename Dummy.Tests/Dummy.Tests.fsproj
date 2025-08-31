@@ -14,14 +14,14 @@
 
   <ItemGroup>
     <PackageReference Include="Archer.Arrow.Lib" Version="0.0.0.43" />
-    <PackageReference Include="Archer.CoreTypes.Lib" Version="0.0.13.42" />
+    <PackageReference Include="Archer.Types.Lib" Version="0.0.13.42" />
     <PackageReference Include="Archer.Fletching.Lib" Version="0.0.0.33" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
     <PackageReference Update="FSharp.Core" Version="7.0.300" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lib\Archer.Quiver.Lib.fsproj" />
+    <ProjectReference Include="..\Lib\Archer.VSAdapter.Lib.fsproj" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Archer.Quiver.Lib", "Lib\Archer.Quiver.Lib.fsproj", "{E2BC4D04-F0EF-46FF-A7AC-6208C928A769}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Archer.VSAdapter.Lib", "Lib\Archer.VSAdapter.Lib.fsproj", "{E2BC4D04-F0EF-46FF-A7AC-6208C928A769}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{3A84456B-9FD9-4632-8F27-3F94444D5DB4}"
 	ProjectSection(SolutionItems) = preProject
