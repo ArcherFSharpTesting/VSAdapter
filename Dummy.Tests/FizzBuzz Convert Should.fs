@@ -1,9 +1,9 @@
 ﻿module Dummy.Tests.``FizzBuzz Convert Should``
 
 open Archer
-open Archer.Arrows
+open Archer.Core
 
-let feature = Arrow.NewFeature (
+let feature = FeatureFactory.NewFeature (
     TestTags [
         Category "FizzBuzz"
         Category "Converter"

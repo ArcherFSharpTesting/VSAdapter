@@ -2,9 +2,9 @@
 
 open System
 open Archer
-open Archer.Arrows
+open Archer.Core
 
-let feature = Arrow.NewFeature (
+let feature = FeatureFactory.NewFeature (
     TestTags [
         Category "Word Counter"
     ]
